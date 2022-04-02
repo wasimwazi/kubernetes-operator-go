@@ -1,0 +1,6 @@
+apiVersion: app.cisco.com/v1
+kind: NginxOperator
+metadata:
+  name: nginxoperator-sample
+spec:
+  # TODO(user): Add fields here

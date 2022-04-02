@@ -1,0 +1,9 @@
+apiVersion: app.cisco.com/v1
+kind: NginxOperator
+metadata:
+  name: operator-sample
+  namespace: ingress-nginx
+spec:
+  replicas: 4
+  host: "k8s.cisco.com"
+  image: "hashicorp/http-echo:0.2.3"
