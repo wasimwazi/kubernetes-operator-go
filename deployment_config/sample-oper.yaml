@@ -5,5 +5,5 @@ metadata:
   namespace: ingress-nginx
 spec:
   replicas: 4
-  host: "k8s.cisco.com"
+  host: "localhost"
   image: "hashicorp/http-echo:0.2.3"

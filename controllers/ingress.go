@@ -13,7 +13,7 @@ import (
 
 // issuerForIngress returns a issuer object
 func (r *NginxOperatorReconciler) issuerForIngress(m *appv1.NginxOperator, issuerName string) *cmapi.Issuer {
-	stagingServer := "https://acme-v02.api.letsencrypt.org/directory"
+	serverURL := "https://acme-v02.api.letsencrypt.org/directory"
 	email := "wasimakr@cisco.com"
 	ingressClass := "nginx"
 	issuer := cmapi.Issuer{
@@ -24,7 +24,7 @@ func (r *NginxOperatorReconciler) issuerForIngress(m *appv1.NginxOperator, issue
 		Spec: cmapi.IssuerSpec{
 			IssuerConfig: cmapi.IssuerConfig{
 				ACME: &v1.ACMEIssuer{
-					Server: stagingServer,
+					Server: serverURL,
 					Email:  email,
 					PrivateKey: cmmetav1.SecretKeySelector{
 						LocalObjectReference: cmmetav1.LocalObjectReference{
@@ -92,13 +92,13 @@ func (r *NginxOperatorReconciler) ingressForOperator(m *appv1.NginxOperator, iss
 	ingressSpec := networkingv1.IngressSpec{
 		TLS: []networkingv1.IngressTLS{
 			{
-				Hosts:      []string{m.Spec.Host, "localhost"},
+				Hosts:      []string{m.Spec.Host},
 				SecretName: certName,
 			},
 		},
 		Rules: []networkingv1.IngressRule{
 			{
-				// Host: m.Spec.Host,
+				Host: m.Spec.Host,
 				IngressRuleValue: networkingv1.IngressRuleValue{
 					HTTP: &networkingv1.HTTPIngressRuleValue{
 						Paths: ingressPaths,
