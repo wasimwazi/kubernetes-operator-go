@@ -118,13 +118,12 @@ func (r *NginxOperatorReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 	}
 
 	// Create issuer for ingress
-	issuerName := operator.Name + "-issuer-staging"
-	certNamespace := "cert-manager"
+	issuerName := operator.Name + "-issuer"
 	foundIssuer := &cmapi.Issuer{}
-	err = r.Get(ctx, types.NamespacedName{Namespace: certNamespace, Name: issuerName}, foundIssuer)
+	err = r.Get(ctx, types.NamespacedName{Namespace: operator.Namespace, Name: issuerName}, foundIssuer)
 	if err != nil && errors.IsNotFound(err) {
 		// Define a new issuer
-		iss := r.issuerForIngress(operator, issuerName, certNamespace)
+		iss := r.issuerForIngress(operator, issuerName)
 		log.Info("Creating a new issuer", "Issuer.Namespace", iss.Namespace, "Issuer.Name", iss.Name)
 		err = r.Create(ctx, iss)
 		if err != nil {
@@ -142,10 +141,10 @@ func (r *NginxOperatorReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 	// Create certificate for ingress
 	certName := operator.Name + "-certificate"
 	foundCertificate := &cmapi.Certificate{}
-	err = r.Get(ctx, types.NamespacedName{Namespace: certNamespace, Name: certName}, foundCertificate)
+	err = r.Get(ctx, types.NamespacedName{Namespace: operator.Namespace, Name: certName}, foundCertificate)
 	if err != nil && errors.IsNotFound(err) {
 		// Define a new certificate
-		cer := r.certificateForIngress(operator, foundIssuer.Name, certName, certNamespace)
+		cer := r.certificateForIngress(operator, foundIssuer.Name, certName)
 		log.Info("Creating a new certificate", "Certificate.Namespace", cer.Namespace, "Certificate.Name", cer.Name)
 		err = r.Create(ctx, cer)
 		if err != nil {

@@ -32,8 +32,8 @@ func (r *NginxOperatorReconciler) deploymentForOperator(m *appv1.NginxOperator) 
 					Containers: []corev1.Container{
 						{
 							Image:           m.Spec.Image,
-							Args:            []string{"-text=foo"},
-							ImagePullPolicy: corev1.PullAlways,
+							Args:            []string{"-text=Congratulations, it works!"},
+							ImagePullPolicy: corev1.PullIfNotPresent,
 							Name:            "operator-image",
 							Ports: []corev1.ContainerPort{{
 								ContainerPort: 5678,

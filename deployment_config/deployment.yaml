@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: sample-controller
+  name: sample-controller
+  namespace: operator-deployment-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-controller
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: sample-controller
+    spec:
+      containers:
+      - image: ghcr.io/wasimwazi/kubernetes-operator-go:latest
+        name: kubernetes-operator-go
+        imagePullPolicy: IfNotPresent
+        resources: {}
+      serviceAccountName: sample-sa
+status: {}

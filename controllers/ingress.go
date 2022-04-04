@@ -12,23 +12,23 @@ import (
 )
 
 // issuerForIngress returns a issuer object
-func (r *NginxOperatorReconciler) issuerForIngress(m *appv1.NginxOperator, issuerName, certNamespace string) *cmapi.Issuer {
-	stagingServer := "https://acme-staging-v02.api.letsencrypt.org/directory"
+func (r *NginxOperatorReconciler) issuerForIngress(m *appv1.NginxOperator, issuerName string) *cmapi.Issuer {
+	serverURL := "https://acme-v02.api.letsencrypt.org/directory"
 	email := "wasimakr@cisco.com"
 	ingressClass := "nginx"
 	issuer := cmapi.Issuer{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      issuerName,
-			Namespace: certNamespace,
+			Namespace: m.Namespace,
 		},
 		Spec: cmapi.IssuerSpec{
 			IssuerConfig: cmapi.IssuerConfig{
 				ACME: &v1.ACMEIssuer{
-					Server: stagingServer,
+					Server: serverURL,
 					Email:  email,
 					PrivateKey: cmmetav1.SecretKeySelector{
 						LocalObjectReference: cmmetav1.LocalObjectReference{
-							Name: "my-key",
+							Name: "operator-secret-key",
 						},
 					},
 					Solvers: []v1.ACMEChallengeSolver{
@@ -51,12 +51,12 @@ func (r *NginxOperatorReconciler) issuerForIngress(m *appv1.NginxOperator, issue
 }
 
 // certificateForIngress returns a certificate object
-func (r *NginxOperatorReconciler) certificateForIngress(m *appv1.NginxOperator, issuerName, certName, certNamespace string) *cmapi.Certificate {
+func (r *NginxOperatorReconciler) certificateForIngress(m *appv1.NginxOperator, issuerName, certName string) *cmapi.Certificate {
 	secretName := m.Name + "-secret"
 	certificate := cmapi.Certificate{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      certName,
-			Namespace: certNamespace,
+			Namespace: m.Namespace,
 		},
 		Spec: cmapi.CertificateSpec{
 			SecretName: secretName,
@@ -77,7 +77,7 @@ func (r *NginxOperatorReconciler) ingressForOperator(m *appv1.NginxOperator, iss
 	pathType := networkingv1.PathTypePrefix
 	ingressPaths := []networkingv1.HTTPIngressPath{
 		{
-			Path:     "/foo",
+			Path:     "/",
 			PathType: &pathType,
 			Backend: networkingv1.IngressBackend{
 				Service: &networkingv1.IngressServiceBackend{
@@ -98,7 +98,7 @@ func (r *NginxOperatorReconciler) ingressForOperator(m *appv1.NginxOperator, iss
 		},
 		Rules: []networkingv1.IngressRule{
 			{
-				// Host: m.Spec.Host,
+				Host: m.Spec.Host,
 				IngressRuleValue: networkingv1.IngressRuleValue{
 					HTTP: &networkingv1.HTTPIngressRuleValue{
 						Paths: ingressPaths,
