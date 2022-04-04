@@ -63,6 +63,7 @@ $ kubectl apply -f https://raw.githubusercontent.com/wasimwazi/kubernetes-operat
 Applying this manifest will deploy the custom controller inside ```operator-deployment-namespace``` namespace.
 
 <b>Step 9: Apply the custom operator yaml</b>
+
 Create a yaml file which corresponds to the CRD for this project and apply the configuration using ```kubectl apply``` command. 
 A sample CRD configuration file present in this repository can be applied.
 ```
